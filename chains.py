@@ -12,7 +12,7 @@ from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI
 
-from schemas import AnswerQuestion
+from schemas import AnswerQuestion, ReviseAnswer
 
 llm = ChatOpenAI(model='gpt-4-turbo-preview')
 parse = JsonOutputToolsParser(return_id=True)
@@ -40,6 +40,22 @@ first_responder_prompt_template = actor_prompt_template.partial(
 # This is grounding the model in the AnswerQuestion tool
 first_responder = first_responder_prompt_template | llm.bind_tools(
     tools=[AnswerQuestion], tool_choice="AnswerQuestion"
+)
+
+revise_instructions = """Revise your previous answer using the new information.
+- You should use the previous critique to add important information to your answer.
+    - You MUST include numerical citations in your revised answer to ensure it can be verified.
+    - Add a "References" section to the bottom of your answer (which does not count towards the word limit). In form of:
+        - [1] - https://www.google.com
+        - [2] - https://www.google.com
+        - ...
+    - You should use the previous critique to remove superfluous information from your answer and make SURE it's not more than 250 words.
+"""
+
+revisor = actor_prompt_template.partial(
+    first_instructions=revise_instructions
+) | llm.bind_tools(
+    tools=[ReviseAnswer], tool_choice="ReviseAnswer"
 )
 
 if __name__ == "__main__":
