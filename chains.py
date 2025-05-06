@@ -14,7 +14,7 @@ from langchain_openai import ChatOpenAI
 
 from schemas import AnswerQuestion, ReviseAnswer
 
-llm = ChatOpenAI(model='gpt-4-turbo-preview')
+llm = ChatOpenAI(model="gpt-4-turbo-preview")
 parse = JsonOutputToolsParser(return_id=True)
 parser_pydantic = PydanticToolsParser(tools=[AnswerQuestion])
 
@@ -26,7 +26,7 @@ actor_prompt_template = ChatPromptTemplate.from_messages(
             Current time: {time}
             1. {first_instructions}
             2. Reflect and critique your answer. Be severe to maximize improvement.
-            3. Recommend search queries to research information and improve your answer."""
+            3. Recommend search queries to research information and improve your answer.""",
         ),
         MessagesPlaceholder(variable_name="messages"),
     ]
@@ -54,9 +54,7 @@ revise_instructions = """Revise your previous answer using the new information.
 
 revisor = actor_prompt_template.partial(
     first_instructions=revise_instructions
-) | llm.bind_tools(
-    tools=[ReviseAnswer], tool_choice="ReviseAnswer"
-)
+) | llm.bind_tools(tools=[ReviseAnswer], tool_choice="ReviseAnswer")
 
 if __name__ == "__main__":
     human_message = HumanMessage(
@@ -64,8 +62,7 @@ if __name__ == "__main__":
         " list startups that do that and raised capital."
     )
 
-    chain = (first_responder | parser_pydantic)
+    chain = first_responder | parser_pydantic
 
     res = chain.invoke(input={"messages": [human_message]})
     print(res)
-    
