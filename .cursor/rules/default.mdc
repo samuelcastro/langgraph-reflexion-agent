@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+- Keep code concise.
+- Follow the DRY (Don't Repeat Yourself) and the KISS (Keep It Simple, Stupid) principle.
+- Avoid unnecessary comments that don't explain what the code is doing.

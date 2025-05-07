@@ -15,7 +15,7 @@ from langchain_openai import ChatOpenAI
 from schemas import AnswerQuestion, ReviseAnswer
 
 llm = ChatOpenAI(model="gpt-4-turbo-preview")
-parse = JsonOutputToolsParser(return_id=True)
+parser = JsonOutputToolsParser(return_id=True)
 parser_pydantic = PydanticToolsParser(tools=[AnswerQuestion])
 
 actor_prompt_template = ChatPromptTemplate.from_messages(
